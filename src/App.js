@@ -1,8 +1,14 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef, useState, useMemo} from 'react';
 import Wrapper from './Wrappers';
 import CreateUsers from './CreateUsers';
 import PrintList from './listArray'
 import './App.css'
+
+function countActiveUsers(users) {
+  console.log('active user couting....')
+  return users.filter(user => user.active).length
+}
+
 
 function App() {
   const name ='Oslo'
@@ -89,6 +95,9 @@ function App() {
     setUsers(users.map(user => user.id === id ? {...user, active: !user.active} : user))
   }
 
+  const count = useMemo(() => countActiveUsers(users), [users])
+  // countActiveUsers(users) 
+  // 이렇게 사용할 경우 input 값이 변경될 경우 즉, 입력하는 동안 계속 값이 변경되므로 불필요한 동작 및 메모리 누수가 생김
   return (
     <Wrapper>
       <CreateUsers 
@@ -98,6 +107,7 @@ function App() {
         onCreate={onCreate}
       />
       <PrintList user={users} onRemove={onRemove} onToggle={onToggle} />
+      <div>현재활성화 된 유저수:{count}</div>
     </Wrapper>
   );
 }
