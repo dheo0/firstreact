@@ -1,7 +1,15 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 // vue에 v-for와 같은 개념
 
 function Users({user, onRemove, onToggle}) {
+    useEffect(() => {
+        console.log('화면에 나타남');
+        console.log(user)
+        return () => {
+            console.log('화면에서 사라짐')
+            console.log(user)
+        }
+    }, [user])
     return (
         <div>
             <b 
