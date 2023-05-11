@@ -1,4 +1,4 @@
-import React, {useRef, useState, useMemo} from 'react';
+import React, {useRef, useState, useMemo, useCallback} from 'react';
 import Wrapper from './Wrappers';
 import CreateUsers from './CreateUsers';
 import PrintList from './listArray'
@@ -11,14 +11,14 @@ function countActiveUsers(users) {
 
 
 function App() {
-  const name ='Oslo'
-  const style = {
-    backgroundColor: 'black',
-    color: 'aqua',
-    fontSize: 24,
-    padding: '1rem'
-  }
-  
+
+  // const name ='Oslo'
+  // const style = {
+  //   backgroundColor: 'black',
+  //   color: 'aqua',
+  //   fontSize: 24,
+  //   padding: '1rem'
+  // }
   
   // input 초기값 세팅
   const [Inputs, setInputs] = useState({
@@ -28,17 +28,17 @@ function App() {
   // 구조분해할당 
   const {username, email} = Inputs
   // input값 변경시 value 값 세팅
-  const onChange = (e) => {
+  const onChange = useCallback(e => {
     /**
      * 여러개의 input을 하나의 메서드로 제어하기 위하여 사용
      */
     const { name, value } = e.target; // 선택한 input에 대한 구조 분해 할당 
     // value값 변경시 값 할당
-    setInputs({
+    setInputs(Inputs => ({
       ...Inputs,
       [name] : value
-    })
-  }
+    }))
+  }, [])
 
   const [users, setUsers] = useState([
     {
@@ -64,7 +64,7 @@ function App() {
 
   const nextID = useRef(arrLength)
 
-  const onCreate = () => {
+  const onCreate = useCallback(() => {
     const user = {
       id: nextID.current,
       username,
@@ -84,16 +84,16 @@ function App() {
       email:''
     })
     nextID.current += 1
-  }
-  const onRemove = (id) => {
+  }, [users, username, email])
+  const onRemove = useCallback(id => {
     /**
      * 배열의 삭제시 불변성 지켜주기위해 filter 함수 사용
      */
-    setUsers(users.filter(user => user.id !== id))
-  }
-  const onToggle = (id) => {
-    setUsers(users.map(user => user.id === id ? {...user, active: !user.active} : user))
-  }
+    setUsers(users => users.filter(user => user.id !== id))
+  }, [])
+  const onToggle = useCallback(id => {
+    setUsers(users => users.map(user => user.id === id ? {...user, active: !user.active} : user))
+  },[])
 
   const count = useMemo(() => countActiveUsers(users), [users])
   // countActiveUsers(users) 
